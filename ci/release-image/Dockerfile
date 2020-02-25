@@ -16,7 +16,7 @@ RUN apt-get install -y dumb-init sudo
 RUN apt-get install -y man procps vim nano htop ssh git
 
 RUN adduser --gecos '' --disabled-password coder && \
-	echo "coder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nopasswd
+  echo "coder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nopasswd
 
 RUN curl -SsL https://github.com/boxboat/fixuid/releases/download/v0.4/fixuid-0.4-linux-amd64.tar.gz | tar -C /usr/local/bin -xzf - && \
     chown root:root /usr/local/bin/fixuid && \
@@ -28,7 +28,9 @@ RUN rm -rf /var/lib/apt/lists/*
 
 COPY release/code-server*.tar.gz /tmp
 RUN cd /tmp && tar -xzf code-server*.tar.gz && \
-  cp code-server*/code-server /usr/local/bin/code-server
+  cp code-server*/code-server /usr/local/bin/code-server && \
+  cp -r code-server* /usr/lib/code-server && \
+  sed 's/\$0/\/usr\/lib\/code-server/g' /usr/lib/code-server/code-server > /usr/bin/code-server
 RUN rm -rf /tmp/*
 
 EXPOSE 8080
